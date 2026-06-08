@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel2Byte</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" type="image/x-icon" href="assets/favicon.png">
+</head>
+<body>
+<div class="app">
+
+<header>
+  <pre class="h-logo">
+  ___ _         _ ___ ___      _       
+ | _ (_)_ _____| |_  ) _ )_  _| |_ ___ 
+ |  _/ \ \ / -_) |/ /| _ \ || |  _/ -_)
+ |_| |_/_\_\___|_/___|___/\_, |\__\___|
+                          |__/                 
+  </pre>
+  <div class="h-sep"></div>
+  <div class="h-info">
+    <div class="h-title">PIXEL → C BYTE ARRAY</div>
+  </div>
+  <div class="h-tabs">
+    <div class="htab on" data-pane="upload">[ UPLOAD ]</div>
+    <div class="htab" data-pane="draw">[ DRAW ]</div>
+  </div>
+</header>
+
+<aside>
+
+  <div class="sec">
+    <div class="sec-title">OUTPUT</div>
+
+    <div class="cmd-block">
+      <div class="cmd-prompt"><span class="cmd-dollar">$</span> var_name</div>
+      <input class="cmd-input" type="text" id="varName" value="myBitmap" spellcheck="false">
+    </div>
+
+    <div class="cmd-block">
+      <div class="cmd-prompt"><span class="cmd-dollar">$</span> format</div>
+      <div class="cmd-val cmd-hi" id="fmtLabel">arduino</div>
+      <div class="cmd-opts">
+        <span class="cmd-opt sel" data-val="arduino" onclick="cmdSel(this,'fmt','fmtLabel')">arduino</span>
+        <span class="cmd-opt"    data-val="raw"      onclick="cmdSel(this,'fmt','fmtLabel')">raw hex</span>
+        <span class="cmd-opt"    data-val="binary"   onclick="cmdSel(this,'fmt','fmtLabel')">binary</span>
+      </div>
+      <input type="hidden" id="fmt" value="arduino">
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">CANVAS</div>
+
+    <div class="cmd-block">
+      <div class="cmd-prompt"><span class="cmd-dollar">$</span> dimensions</div>
+      <div class="dim-row">
+        <div class="dim-cell">
+          <div class="dim-lbl">W ── width</div>
+          <input class="dim-input" type="number" id="outW" value="128" min="1" max="512">
+        </div>
+        <div class="dim-cell">
+          <div class="dim-lbl">H ── height</div>
+          <input class="dim-input" type="number" id="outH" value="64" min="1" max="512">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">PROCESSING</div>
+
+    <div class="cmd-block">
+      <div class="cmd-prompt"><span class="cmd-dollar">$</span> threshold</div>
+      <div class="cmd-val"><span class="cmd-hi" id="thV">128</span><span class="cmd-of"> / 255</span></div>
+      <input type="range" id="threshold" min="0" max="255" value="128" style="--fill:50%"
+             oninput="document.getElementById('thV').textContent=this.value;updateSliderFill(this)">
+    </div>
+
+    <div class="cmd-block">
+      <div class="cmd-prompt"><span class="cmd-dollar">$</span> dithering</div>
+      <div class="cmd-val cmd-hi" id="ditherLabel">threshold</div>
+      <div class="cmd-opts">
+        <span class="cmd-opt sel" data-val="threshold" onclick="cmdSel(this,'ditherMode','ditherLabel')">none</span>
+        <span class="cmd-opt"    data-val="floyd"      onclick="cmdSel(this,'ditherMode','ditherLabel')">floyd-steinberg</span>
+        <span class="cmd-opt"    data-val="bayer"      onclick="cmdSel(this,'ditherMode','ditherLabel')">bayer 4×4</span>
+      </div>
+      <input type="hidden" id="ditherMode" value="threshold">
+    </div>
+
+    <div class="cmd-block">
+      <div class="cmd-prompt"><span class="cmd-dollar">$</span> color_mode</div>
+      <div class="cmd-val cmd-hi" id="colorLabel">bw</div>
+      <div class="cmd-opts">
+        <span class="cmd-opt sel" data-val="bw"   onclick="cmdSel(this,'colorMode','colorLabel')">1-bit b&amp;w</span>
+        <span class="cmd-opt"    data-val="gray"   onclick="cmdSel(this,'colorMode','colorLabel')">4-bit gray</span>
+      </div>
+      <input type="hidden" id="colorMode" value="bw">
+    </div>
+
+    <div class="cmd-bools">
+      <label class="cmd-bool" for="invert">
+        <span class="cb-sym">⇄</span>
+        <span class="cb-lbl">invert</span>
+        <input type="checkbox" id="invert">
+      </label>
+      <label class="cmd-bool" for="flipH">
+        <span class="cb-sym">↔</span>
+        <span class="cb-lbl">flip H</span>
+        <input type="checkbox" id="flipH">
+      </label>
+      <label class="cmd-bool" for="rotate">
+        <span class="cb-sym">↻</span>
+        <span class="cb-lbl">rotate</span>
+        <input type="checkbox" id="rotate">
+      </label>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <button class="btn-main" onclick="convertImage()">CONVERT</button>
+    <button class="btn-sec" onclick="copyCode()">⌨ COPY OUTPUT CODE</button>
+    <button class="btn-sec" id="btnDownloadH" onclick="downloadHeader()" disabled>↓ DOWNLOAD .H FILE</button>
+    <div style="margin-top:10px"><span class="byte-tag" id="byteTag">─</span></div>
+  </div>
+
+</aside>
+
+
+<main>
+  <div class="pane on" id="pane-upload">
+    <div class="drop" id="drop">
+      <input type="file" id="fileInput" accept="image/*">
+      <span class="march march-t"></span>
+      <span class="march march-b"></span>
+      <span class="march march-l"></span>
+      <span class="march march-r"></span>
+      <div class="drop-cta">
+        <div class="drop-main">DROP IMAGE HERE</div>
+        <div class="drop-sub">──── or click to browse ────</div>
+      </div>
+      <div class="dtags">
+        <span class="dtag">PNG</span><span class="dtag">JPG</span>
+        <span class="dtag">BMP</span><span class="dtag">GIF</span><span class="dtag">WEBP</span>
+      </div>
+    </div>
+
+    <div class="pvgrid">
+      <div class="pvpanel">
+        <div class="pvlabel">ORIGINAL<span class="pvdim" id="origDim">─</span></div>
+        <div class="pvbox" id="origBox">
+          <div class="pvempty">
+          no image    
+          uploaded    
+        </div>
+        </div>
+      </div>
+      <div class="pvpanel">
+        <div class="pvlabel">CONVERTED<span class="pvdim" id="convDim">─</span></div>
+        <div class="pvbox" id="convBox">
+          <div class="pvempty">
+          no image
+          converted
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="outsec">
+      <div class="outhdr">
+        <span class="outhdr-l">// output code</span>
+        <div class="outhdr-r">
+          <span id="sizeInfo" style="font-size:9px;color:var(--t3)"></span>
+          <button class="copy-btn" onclick="copyCode()">[ COPY ]</button>
+        </div>
+      </div>
+      <div class="outcode" id="outCode"><span class="cm">// upload or draw an image, then click CONVERT
+// ──────────────────────────────────────────
+// output code will appear here</span></div>
+    </div>
+  </div>
+
+
+  <div class="pane" id="pane-draw">
+    <div class="toolbar">
+
+
+      <div class="tb-grp">
+        <span class="tb-lbl">TOOLS</span>
+        <div class="tool-rack">
+          <button class="tbtn on" id="tPen"   onclick="setTool('pen',this)"    title="Pen [P]">✎</button>
+          <button class="tbtn"    id="tLine"  onclick="setTool('line',this)"   title="Line [L]">╱</button>
+          <button class="tbtn"    id="tRect"  onclick="setTool('rect',this)"   title="Rect [R]">▭</button>
+          <button class="tbtn"    id="tOval"  onclick="setTool('oval',this)"   title="Oval [O]">◯</button>
+          <button class="tbtn"    id="tErase" onclick="setTool('eraser',this)" title="Eraser [E]">◻</button>
+          <button class="tbtn"    id="tFill"  onclick="setTool('fill',this)"   title="Fill [F]">▨</button>
+        </div>
+      </div>
+
+      <div class="tb-vsep"></div>
+
+
+      <div class="tb-grp">
+        <span class="tb-lbl">BRUSH</span>
+        <div class="tb-row">
+          <div class="brush-dot" id="brushDot" style="width:4px;height:4px"></div>
+          <input class="brush-slider" type="range" min="1" max="24" value="2" id="brushSlider"
+                 oninput="brushSz=+this.value;updateBrush(this.value)">
+          <span class="brush-num" id="szDsp">2</span>
+        </div>
+      </div>
+
+      <div class="tb-vsep"></div>
+
+
+      <div class="tb-grp">
+        <span class="tb-lbl">ZOOM</span>
+        <select class="tb-select" id="zoomSel" onchange="setZoom(+this.value)">
+          <option value="2">2×</option>
+          <option value="3">3×</option>
+          <option value="4" selected>4×</option>
+          <option value="6">6×</option>
+          <option value="8">8×</option>
+          <option value="10">10×</option>
+        </select>
+      </div>
+
+      <div class="tb-vsep"></div>
+
+
+      <div class="tb-grp">
+        <span class="tb-lbl">SIZE</span>
+        <div class="tb-row">
+          <input class="sz-inp" type="number" id="drawW" value="128" min="1" max="512" onchange="syncSize()">
+          <span class="sz-x">×</span>
+          <input class="sz-inp" type="number" id="drawH" value="64"  min="1" max="512" onchange="syncSize()">
+        </div>
+      </div>
+
+      <div class="tb-spacer"></div>
+
+
+      <div class="tb-row" style="gap:6px">
+        <button class="tb-act" onclick="undoDraw()">↩ UNDO</button>
+        <button class="tb-act" onclick="clearDraw()">✕ CLEAR</button>
+      </div>
+
+      <div class="tb-vsep"></div>
+
+      <button class="tb-cta" onclick="useDrawing()">→ USE AS SOURCE</button>
+
+    </div>
+
+    <div class="draw-wrap">
+      <div class="draw-center">
+        <canvas id="drawCanvas"></canvas>
+      </div>
+      <div class="coord-tip" id="coordTip">─ : ─</div>
+    </div>
+
+
+    <div class="status">
+      <div class="si">canvas <span class="va" id="sbCanvas">128×64</span></div>
+      <div class="si">tool <span class="v" id="sbTool">pen</span></div>
+      <div class="si kb-hint">[ P ] pen &nbsp; [ E ] eraser &nbsp; [ L ] line &nbsp; [ R ] rect &nbsp; [ Ctrl+Z ] undo</div>
+    </div>
+  </div>
+
+</main>
+
+</div>
+
+<script src="js/dither.js"></script>
+<script src="js/convert.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

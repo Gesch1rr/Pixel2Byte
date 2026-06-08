@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel2Byte</title>
+<meta name="description" content="Convert images and pixel art to C byte arrays for Arduino, ESP32, STM32 and OLED displays. Free, no signup, runs entirely in your browser.">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/home.css">
+<link rel="icon" type="image/x-icon" href="assets/favicon.png">
+</head>
+<body>
+
+
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <span class="nl-bracket">[</span>Pixel2Byte<span class="nl-bracket">]</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">features</a>
+      <a href="#how">how it works</a>
+    </div>
+    <a href="app.html" class="nav-cta">→ LAUNCH APP</a>
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="scanlines"></div>
+
+  <div class="hero-inner">
+
+    <!-- Left: text -->
+    <div class="hero-text">
+      <div class="hero-badge">// browser-based converter</div>
+      <pre class="hero-logo">
+  ___ _         _ ___ ___      _       
+ | _ (_)_ _____| |_  ) _ )_  _| |_ ___ 
+ |  _/ \ \ / -_) |/ /| _ \ || |  _/ -_)
+ |_| |_/_\_\___|_/___|___/\_, |\__\___|
+                          |__/          </pre>
+      <p class="hero-sub">
+        Convert images &amp; pixel art to C byte arrays<br>
+        for <span class="hl">Arduino</span>, <span class="hl">ESP32</span>, <span class="hl">STM32</span> and OLED displays.
+      </p>
+      <div class="hero-btns">
+        <a href="app.html" class="btn-launch">
+          <span class="btn-arrow">▶</span> OPEN PIXEL2BYTE
+        </a>
+        <a href="#how" class="btn-ghost">HOW IT WORKS ↓</a>
+      </div>
+      <div class="hero-pills">
+        <span class="pill">FREE</span>
+        <span class="pill">NO SIGNUP</span>
+        <span class="pill">RUNS IN BROWSER</span>
+      </div>
+    </div>
+
+
+    <div class="hero-demo">
+      <div class="demo-label">// live preview</div>
+      <div class="demo-box">
+        <div class="demo-half">
+          <div class="demo-title">INPUT</div>
+          <canvas id="demoCanvas" width="32" height="32"></canvas>
+        </div>
+        <div class="demo-arrow">→</div>
+        <div class="demo-half">
+          <div class="demo-title">OUTPUT</div>
+          <div class="demo-code" id="demoCode"></div>
+        </div>
+      </div>
+      <div class="demo-footer">
+        <span id="demoBytes">─</span> bytes &nbsp;·&nbsp; 32×32px &nbsp;·&nbsp; 1-bit B&W
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<section class="features" id="features">
+  <div class="section-inner">
+    <div class="section-label">// features</div>
+    <h2 class="section-title">Everything you need.<br>Nothing you don't.</h2>
+
+    <div class="feat-grid">
+
+      <div class="feat-card">
+        <div class="feat-cmd"><span class="feat-dollar">$</span> input_source</div>
+        <div class="feat-title">Upload or Draw</div>
+        <p class="feat-desc">Drop any PNG, JPG, BMP, GIF or WEBP file directly onto the canvas. Or use the built-in pixel art editor to draw bitmaps from scratch with pen, line, rect, oval and fill tools.</p>
+        <div class="feat-tags">
+          <span>PNG</span><span>JPG</span><span>BMP</span><span>GIF</span><span>WEBP</span><span>DRAW</span>
+        </div>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-cmd"><span class="feat-dollar">$</span> processing</div>
+        <div class="feat-title">Smart Processing</div>
+        <p class="feat-desc">Three dithering algorithms — simple threshold, Floyd-Steinberg error diffusion, and Bayer 4×4 ordered dithering. 1-bit B&W or 4-bit grayscale output. Invert, flip and rotate controls.</p>
+        <div class="feat-tags">
+          <span>FLOYD-STEINBERG</span><span>BAYER 4×4</span><span>GRAYSCALE</span>
+        </div>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-cmd"><span class="feat-dollar">$</span> export</div>
+        <div class="feat-title">Ready to Use</div>
+        <p class="feat-desc">Outputs Arduino PROGMEM arrays, raw uint8_t hex arrays, or binary strings. Download a ready-to-include .h header file. Copy to clipboard in one click.</p>
+        <div class="feat-tags">
+          <span>PROGMEM</span><span>UINT8_T</span><span>BINARY</span><span>.H FILE</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="how" id="how">
+  <div class="section-inner">
+    <div class="section-label">// how it works</div>
+    <h2 class="section-title">Three steps to a byte array.</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <div class="step-title">Drop your image</div>
+          <p class="step-desc">Drag and drop any image file onto the upload zone, or click to browse. Need to create something from scratch? Switch to the Draw tab and use the built-in pixel art editor.</p>
+        </div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <div class="step-title">Configure & convert</div>
+          <p class="step-desc">Set your canvas size, choose a dithering algorithm, pick color mode and tweak the threshold. Hit CONVERT and see a live preview of exactly what will land on your display.</p>
+        </div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <div class="step-title">Copy & include</div>
+          <p class="step-desc">Copy the generated C array or download the .h header file. Include it in your Arduino sketch or embedded project — your image is ready to push to any display.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="final-cta">
+  <div class="cta-border-t"></div>
+  <div class="section-inner cta-inner">
+    <div class="cta-label">// ready to convert?</div>
+    <h2 class="cta-title">Free. No account.<br>Open in seconds.</h2>
+    <a href="app.html" class="btn-launch btn-large">
+      <span class="btn-arrow">▶</span> OPEN PIXEL2BYTE
+    </a>
+    <p class="cta-note">Runs entirely in your browser — no server, no data sent anywhere.</p>
+  </div>
+</section>
+
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">[Pixel2Byte]</div> 
+    <div class="footer-mid">
+      <span class="footer-copy">©2026 Pixel2Byte</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/home.js"></script>
+</body>
+</html>
