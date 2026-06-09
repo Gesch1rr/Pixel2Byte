@@ -1,11 +1,9 @@
 let srcImage = null;
 
-/* ── Son dönüşüm sonucu — .h indirme için saklanır ── */
 let _lastBytes   = null;
 let _lastVarName = '';
 let _lastW = 0, _lastH = 0;
 
-/* ── File upload ── */
 const dropEl = document.getElementById('drop');
 
 document.getElementById('fileInput').addEventListener('change', e => {
@@ -53,7 +51,6 @@ function showOrig(img) {
   document.getElementById('origDim').textContent = img.width + '×' + img.height + 'px';
 }
 
-/* ── Convert ── */
 function convertImage() {
   const W     = +document.getElementById('outW').value || 128;
   const H     = +document.getElementById('outH').value || 64;
@@ -62,7 +59,6 @@ function convertImage() {
   const fH    =  document.getElementById('flipH').checked;
   const rot   =  document.getElementById('rotate').checked;
   const dMode =  document.getElementById('ditherMode').value;
-  // ✅ FIX: colorMode artık okunuyor
   const cMode =  document.getElementById('colorMode').value;
 
   const btn = document.querySelector('.btn-main');
@@ -82,8 +78,6 @@ function convertImage() {
       if (rot) ctx.rotate(Math.PI / 2);
       if (fH)  ctx.scale(-1, 1);
 
-      // ✅ FIX: 90° döndürme sonrası W ve H yer değiştirmeli
-      // Önceki kod her zaman (W,H) kullanıyordu → W≠H görüntüler bozuluyordu
       if (rot) {
         ctx.drawImage(src, -H / 2, -W / 2, H, W);
       } else {
@@ -94,7 +88,6 @@ function convertImage() {
       const rawId = ctx.getImageData(0, 0, W, H);
       let pixels;
 
-      // ✅ FIX: colorMode'a göre farklı pixel üretimi
       if (cMode === 'gray') {
         pixels = toGray4bit(rawId, W, H, inv);
       } else if (dMode === 'floyd') {
@@ -105,12 +98,11 @@ function convertImage() {
         pixels = thresholdDither(rawId, W, H, thr, inv);
       }
 
-      /* ── Önizleme canvas'ını güncelle ── */
       const previewId = ctx.createImageData(W, H);
       for (let i = 0; i < W * H; i++) {
         let v;
         if (cMode === 'gray') {
-          v = Math.round(pixels[i] / 15 * 255); // 0-15 → 0-255
+          v = Math.round(pixels[i] / 15 * 255);
         } else {
           v = pixels[i] ? 0 : 255;
         }
@@ -121,7 +113,6 @@ function convertImage() {
       }
       ctx.putImageData(previewId, 0, 0);
 
-      /* ── Converted preview panel ── */
       const cBox = document.getElementById('convBox');
       cBox.innerHTML = '';
       const pc = document.createElement('canvas');
@@ -157,10 +148,6 @@ function convertImage() {
   }
 }
 
-/* ──────────────────────────────────────────────────────────────
-   toGray4bit — 4-bit grayscale pixel dizisi üretir (0–15)
-   Alpha-aware: şeffaf piksel beyaz (15) olarak işlenir
-────────────────────────────────────────────────────────────── */
 function toGray4bit(imageData, W, H, invert) {
   const src    = imageData.data;
   const pixels = [];
@@ -175,10 +162,6 @@ function toGray4bit(imageData, W, H, invert) {
   return pixels;
 }
 
-/* ──────────────────────────────────────────────────────────────
-   escHtml — XSS koruması
-   varName input'u innerHTML'e gitmeden önce temizlenir
-────────────────────────────────────────────────────────────── */
 function escHtml(s) {
   return String(s)
     .replace(/&/g, '&amp;')
@@ -187,7 +170,6 @@ function escHtml(s) {
     .replace(/"/g, '&quot;');
 }
 
-/* ── Code builder ── */
 function buildCode(pixels, W, H, cMode) {
   const name = document.getElementById('varName').value || 'myBitmap';
   const fmt  = document.getElementById('fmt').value;
@@ -196,7 +178,6 @@ function buildCode(pixels, W, H, cMode) {
   const bytes = [];
 
   if (cMode === 'gray') {
-    // ✅ 4-bit grayscale: 2 piksel → 1 byte (high nibble | low nibble)
     for (let r = 0; r < H; r++) {
       for (let b = 0; b < Math.ceil(W / 2); b++) {
         const p1 = pixels[r * W + b * 2]     ?? 0;
@@ -205,7 +186,6 @@ function buildCode(pixels, W, H, cMode) {
       }
     }
   } else {
-    // 1-bit BW: 8 piksel → 1 byte (MSB first)
     const bpr = Math.ceil(W / 8);
     for (let r = 0; r < H; r++) {
       for (let b = 0; b < bpr; b++) {
@@ -221,7 +201,6 @@ function buildCode(pixels, W, H, cMode) {
 
   const modeLabel = cMode === 'gray' ? '4-bit grayscale' : '1-bit B&W';
   const lines     = [];
-  // ✅ FIX: escHtml ile XSS koruması
   const cm       = t => `<span class="cm">${escHtml(t)}</span>`;
   const safeName = escHtml(name);
 
@@ -258,7 +237,6 @@ function buildCode(pixels, W, H, cMode) {
     lines.push('};');
   }
 
-  /* ── Typewriter reveal ── */
   const el = document.getElementById('outCode');
   el.innerHTML = '';
   const MAX_ANIMATED = 30;
@@ -287,7 +265,6 @@ function buildCode(pixels, W, H, cMode) {
   tag.classList.add('pop');
 }
 
-/* ── Download .h ── */
 function downloadHeader() {
   if (!_lastBytes || !_lastBytes.length) return;
 
@@ -341,16 +318,13 @@ function downloadHeader() {
   }, 1600);
 }
 
-/* ── Copy ── */
 function copyCode() {
   const el   = document.getElementById('outCode');
   const text = el.innerText || el.textContent;
 
-  // ✅ FIX: placeholder string yerine _lastBytes kontrolü — daha güvenilir
   if (!_lastBytes || !_lastBytes.length) return;
 
   navigator.clipboard.writeText(text).then(() => {
-    // ✅ FIX: Download butonu artık "COPIED" olmuyor
     document.querySelectorAll('.copy-btn, .btn-sec:not(#btnDownloadH)').forEach(btn => {
       const orig = btn.textContent;
       btn.textContent       = '✓ COPIED';

@@ -1,5 +1,3 @@
-/* ── Terminal-style processing helpers ── */
-
 function cmdSel(opt, hiddenId, labelId) {
   opt.closest('.cmd-opts').querySelectorAll('.cmd-opt').forEach(o => o.classList.remove('sel'));
   opt.classList.add('sel');
@@ -12,7 +10,6 @@ function updateSliderFill(input) {
   input.style.setProperty('--fill', pct);
 }
 
-/* ── Tab switching ── */
 document.querySelectorAll('.htab').forEach(t => {
   t.addEventListener('click', () => {
     document.querySelectorAll('.htab').forEach(x => x.classList.remove('on'));
@@ -23,7 +20,6 @@ document.querySelectorAll('.htab').forEach(t => {
   });
 });
 
-/* ── Convert button ripple ── */
 document.querySelector('.btn-main').addEventListener('click', function(e) {
   const btn  = this;
   const r    = btn.getBoundingClientRect();
@@ -35,7 +31,6 @@ document.querySelector('.btn-main').addEventListener('click', function(e) {
   setTimeout(() => rip.remove(), 650);
 });
 
-/* ── Button click bounce ── */
 document.querySelectorAll('.tbtn, .tb-act, .tb-cta').forEach(btn => {
   btn.addEventListener('mousedown', () => {
     btn.classList.remove('clicked');
@@ -45,7 +40,6 @@ document.querySelectorAll('.tbtn, .tb-act, .tb-cta').forEach(btn => {
   });
 });
 
-/* ── Keyboard shortcuts ── */
 document.addEventListener('keydown', e => {
   const isDrawPane = document.getElementById('pane-draw').classList.contains('on');
 
@@ -72,7 +66,6 @@ document.addEventListener('keydown', e => {
   }
 });
 
-/* ── Slider init ── */
 document.addEventListener('DOMContentLoaded', () => {
   const th = document.getElementById('threshold');
   if (th) updateSliderFill(th);

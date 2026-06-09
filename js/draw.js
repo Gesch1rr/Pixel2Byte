@@ -11,7 +11,6 @@ const MAX_UNDO = 30;
 const dc   = document.getElementById('drawCanvas');
 const dctx = dc.getContext('2d');
 
-/* ── Init ── */
 function initDraw(keep) {
   const w = +document.getElementById('outW').value || 128;
   const h = +document.getElementById('outH').value || 64;
@@ -54,7 +53,6 @@ function syncSize() {
   initDraw(true);
 }
 
-/* ── Undo ── */
 function saveUndo() {
   if (undoStack.length >= MAX_UNDO) undoStack.shift();
   undoStack.push(dctx.getImageData(0, 0, dc.width, dc.height));
@@ -65,7 +63,6 @@ function undoDraw() {
   dctx.putImageData(undoStack.pop(), 0, 0);
 }
 
-/* ── Position helper ── */
 function getPos(e) {
   const r   = dc.getBoundingClientRect();
   const scX = dc.width  / r.width;
@@ -77,7 +74,6 @@ function getPos(e) {
   ];
 }
 
-/* ── Paint primitives ── */
 function paintPx(x, y) {
   dctx.fillStyle = tool === 'eraser' ? '#ffffff' : '#000000';
   const s = brushSz;
@@ -143,7 +139,6 @@ function pixelOval(x0, y0, x1, y1) {
   }
 }
 
-/* Flood fill */
 function floodFill(x, y) {
   const id = dctx.getImageData(0, 0, dc.width, dc.height);
   const px = id.data;
@@ -164,7 +159,6 @@ function floodFill(x, y) {
   dctx.putImageData(id, 0, 0);
 }
 
-/* ── Canvas events ── */
 function onDown(e) {
   e.preventDefault();
   saveUndo();
@@ -180,7 +174,6 @@ function onMove(e) {
   e.preventDefault();
   const [cx, cy] = getPos(e);
 
-  // ✅ Sadece sağ alt coordTip güncelleniyor, sbPos kaldırıldı
   document.getElementById('coordTip').textContent = cx + ' : ' + cy;
 
   if (!drawing) return;
@@ -209,7 +202,6 @@ dc.addEventListener('touchstart', onDown, { passive: false });
 dc.addEventListener('touchmove',  onMove, { passive: false });
 dc.addEventListener('touchend',   onUp);
 
-/* ── Tool controls ── */
 function setTool(t, btn) {
   tool = t;
   document.querySelectorAll('.tbtn').forEach(b => b.classList.remove('on'));
@@ -241,7 +233,6 @@ function updateBrush(val) {
   dot.style.height = size + 'px';
 }
 
-/* ── Init on load ── */
 document.querySelectorAll('.sz-inp').forEach(inp => {
   inp.addEventListener('wheel', e => e.preventDefault(), { passive: false });
 });
