@@ -14,7 +14,7 @@
 
 ---
 
-<img width="2562" height="1277" alt="Ekran Görüntüsü 2026-07-23 14-27-21" src="https://github.com/user-attachments/assets/528d42a0-6187-4543-9428-f24502281ca6" />
+<img width="2556" height="1277" alt="resim" src="https://github.com/user-attachments/assets/60299f02-7936-4473-a79f-bc803ed2803c" />
 
 ---
 
