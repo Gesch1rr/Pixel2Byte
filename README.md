@@ -16,6 +16,8 @@
 
 <img width="2556" height="1277" alt="resim" src="https://github.com/user-attachments/assets/60299f02-7936-4473-a79f-bc803ed2803c" />
 
+<img width="2556" height="1277" alt="resim" src="https://github.com/user-attachments/assets/1777e480-a266-4250-81ab-ad8ca00a5c5a" />
+
 ---
 
 ## About
