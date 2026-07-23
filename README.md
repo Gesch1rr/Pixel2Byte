@@ -14,6 +14,10 @@
 
 ---
 
+<img width="2562" height="1277" alt="Ekran Görüntüsü 2026-07-23 14-27-21" src="https://github.com/user-attachments/assets/528d42a0-6187-4543-9428-f24502281ca6" />
+
+---
+
 ## About
 
 Pixel2Byte is a browser-based tool that turns any image — or a drawing you make on the spot — into a ready-to-paste C array for embedded displays such as SSD1306, SH1106 and similar monochrome OLED / LCD panels.
@@ -94,17 +98,3 @@ Each pixel is reduced to luminance using the standard `0.299R + 0.587G + 0.114B`
 - **Bayer** — compares luminance against a repeating 4×4 matrix, giving a uniform crosshatch pattern that tends to look cleaner on small icons.
 
 The resulting pixels are packed MSB-first, eight per byte, row by row. In grayscale mode each pixel becomes a 4-bit nibble and two pixels share a byte.
-
-## Project structure
-
-```
-index.html      landing page
-app.html        the converter
-css/            home.css, style.css
-js/
-  convert.js    image loading, conversion pipeline, code generation, export
-  dither.js     threshold, Floyd–Steinberg and Bayer implementations
-  draw.js       pixel editor: tools, undo stack, zoom
-  app.js        UI wiring, tabs, keyboard shortcuts
-  home.js       landing page demo
-```
