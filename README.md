@@ -10,8 +10,6 @@
 
 **Convert images and pixel art into C byte arrays for Arduino, ESP32, STM32 and OLED displays.**
 
-Free · No signup · Runs entirely in your browser
-
 </div>
 
 ---
