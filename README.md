@@ -1,12 +1,12 @@
-<div align="center">
-
 ```
-  ___ _         _ ___ ___      _
- | _ (_)_ _____| |_  ) _ )_  _| |_ ___
+  ___ _         _ ___ ___      _       
+ | _ (_)_ _____| |_  ) _ )_  _| |_ ___ 
  |  _/ \ \ / -_) |/ /| _ \ || |  _/ -_)
  |_| |_/_\_\___|_/___|___/\_, |\__\___|
-                          |__/
+                          |__/         
 ```
+
+<div align="center">
 
 **Convert images and pixel art into C byte arrays for Arduino, ESP32, STM32 and OLED displays.**
 
